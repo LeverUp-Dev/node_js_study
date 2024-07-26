@@ -52,8 +52,8 @@ var app = http.createServer(function (request, response) {
     } else {
       fs.readdir("./web2_nodejs/data", function (error, filelist) {
         fs.readFile(
-          `data/${queryData.id}`,
-          "utf-8",
+          `web2_nodejs/data/${queryData.id}`,
+          "utf8",
           function (err, description) {
             var title = queryData.id;
             var list = templateList(filelist);
@@ -85,8 +85,7 @@ var app = http.createServer(function (request, response) {
           <p>
             <input type="submit" />
           </p>
-        </form>
-        `
+        </form>`
       );
       response.writeHead(200);
       response.end(template);
@@ -100,10 +99,16 @@ var app = http.createServer(function (request, response) {
       let post = qs.parse(body);
       let title = post.title;
       let description = post.description;
-      console.log(post);
+      fs.writeFile(
+        `web2_nodejs/data/${title}`,
+        description,
+        "utf8",
+        function (err) {
+          response.writeHead(302, { location: `/?id=${title}` });
+          response.end("seccess");
+        }
+      );
     });
-    response.writeHead(200);
-    response.end("seccess");
   } else {
     response.writeHead(404);
     response.end("Not found");
